@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api
+Disallow: /api/
+
+Sitemap: https://r-rajaneesh.vercel.app/sitemap.xml

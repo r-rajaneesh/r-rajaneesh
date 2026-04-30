@@ -1,0 +1,23 @@
+---
+import '../../styles/global.css';
+import { getConfig } from '../../data/config';
+import AdminDashboard from '../../components/AdminDashboard';
+
+const session = Astro.cookies.get('admin_session');
+if (!session || session.value !== 'authenticated') {
+  return Astro.redirect('/admin/login');
+}
+
+const config = await getConfig();
+---
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Admin Dashboard | Portfolio</title>
+  <meta name="robots" content="noindex, nofollow" />
+</head>
+<body>
+  <AdminDashboard client:load initialConfig={config} />
+</body>
+</html>

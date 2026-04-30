@@ -1,17 +1,261 @@
 ---
+import '../styles/global.css';
+import { getConfig } from '../data/config';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import ResumeViewer from '../components/ResumeViewer';
+import Contact from '../components/Contact.astro';
 
+const config = await getConfig();
 ---
 
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>{config.name} | Portfolio</title>
+		<meta name="description" content={config.bio} />
+		<script is:inline>
+			document.documentElement.classList.add('js-enabled');
+		</script>
+		<style define:vars={{ 
+			primaryColor: config.theme.primary,
+			secondaryColor: config.theme.secondary,
+			accentColor: config.theme.accent,
+			bgColor: config.theme.background,
+			textColor: config.theme.text
+		}}>
+			:root {
+				--bg-primary: var(--bgColor);
+				--bg-secondary: #fdfcfb;
+				--text-primary: var(--textColor);
+				--text-secondary: #525252;
+				--accent: var(--primaryColor);
+				--accent-2: var(--secondaryColor);
+				--accent-3: var(--accentColor);
+				--accent-soft: #f0fdf4;
+				--border: #262626;
+			}
+		</style>
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<nav class="glass-card navbar">
+			<div class="container nav-container">
+				<a href="#" class="nav-logo">{config.name}</a>
+				<div class="nav-links">
+					<a href="#home">Home</a>
+					<a href="#projects">Projects</a>
+					<a href="#skills">Skills</a>
+					<a href="#resume">Resume</a>
+					<a href="#contact">Contact</a>
+				</div>
+			</div>
+		</nav>
+
+		<main>
+			<Hero />
+
+			<section id="projects">
+				<div class="container">
+					<h2 class="reveal section-title">Featured Projects</h2>
+					<div class="projects-grid">
+						{config.projects.map((project) => (
+							<ProjectCard project={project} />
+						))}
+					</div>
+				</div>
+			</section>
+
+			<section id="skills" class="skills-section">
+				<div class="container">
+					<h2 class="reveal section-title">Technical Expertise</h2>
+					<div class="skills-grid">
+						{config.skills.map((skillGroup) => (
+							<div class="skill-group reveal glass-card">
+								<h3>{skillGroup.category}</h3>
+								<div class="skill-items">
+									{skillGroup.items.map((skill) => {
+										const bgStyle = Array.isArray(skill.color) 
+											? `linear-gradient(135deg, ${skill.color[0]}, ${skill.color[1]})`
+											: skill.color;
+										return (
+											<span class="skill-tag" style={`--skill-hover-bg: ${bgStyle}`}>
+												{skill.name}
+											</span>
+										);
+									})}
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
+			</section>
+
+			<section id="resume">
+				<div class="container">
+					<h2 class="reveal section-title">Resume</h2>
+					<ResumeViewer client:only="react" />
+				</div>
+			</section>
+
+			<Contact />
+		</main>
+
+		<footer class="footer">
+			<div class="container">
+				<p>&copy; {new Date().getFullYear()} {config.name}.</p>
+			</div>
+		</footer>
+
+		<script>
+			const observerOptions = {
+				threshold: 0.1,
+				rootMargin: '0px 0px -50px 0px'
+			};
+
+			const observer = new IntersectionObserver((entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add('revealed');
+						observer.unobserve(entry.target);
+					}
+				});
+			}, observerOptions);
+
+			document.querySelectorAll('.reveal').forEach((el) => {
+				observer.observe(el);
+			});
+		</script>
+
+		<style>
+			.navbar {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				z-index: 100;
+				padding: 1.5rem 0;
+				border-bottom: 2px solid var(--border);
+				background: var(--bg-primary);
+			}
+
+			.nav-container {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+
+			.nav-logo {
+				font-family: 'Outfit', sans-serif;
+				font-weight: 700;
+				font-size: 1.25rem;
+				color: var(--accent);
+			}
+
+			.nav-links {
+				display: flex;
+				gap: 2rem;
+			}
+
+			.nav-links a {
+				font-weight: 500;
+				font-size: 0.9rem;
+				color: var(--text-secondary);
+			}
+
+			.nav-links a:hover {
+				color: var(--accent);
+			}
+
+			.section-title {
+				font-size: 2.5rem;
+				margin-bottom: 3rem;
+				text-align: center;
+			}
+
+			.projects-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+				gap: 2rem;
+			}
+
+			.skills-section {
+				background-color: var(--bg-secondary);
+			}
+
+			.skills-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+				gap: 2rem;
+			}
+
+			.skill-group {
+				padding: 2rem;
+			}
+
+			.skill-group h3 {
+				font-size: 1.25rem;
+				margin-bottom: 1.5rem;
+				color: var(--accent);
+			}
+
+			.skill-items {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.75rem;
+			}
+
+			.skill-tag {
+				background-color: white;
+				border: 1px solid var(--border);
+				padding: 0.4rem 0.8rem;
+				border-radius: 0;
+				font-size: 0.85rem;
+				font-weight: 500;
+				transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+				cursor: pointer;
+			}
+
+			.skill-tag:hover {
+				background: var(--skill-hover-bg);
+				color: white;
+				border-color: transparent;
+				transform: translateY(-4px);
+				box-shadow: 4px 4px 0px var(--border);
+			}
+
+			/* Specific contrast fix for bright colors like JS Yellow */
+			.skill-tag[style*="#f7df1e"]:hover,
+			.skill-tag[style*="#fbf0df"]:hover,
+			.skill-tag[style*="#fcc624"]:hover {
+				color: #1a1a1a;
+			}
+
+			.skill-tag:active {
+				transform: translateY(0);
+				box-shadow: 2px 2px 0px var(--border);
+			}
+
+			.footer {
+				padding: 4rem 0;
+				text-align: center;
+				color: var(--text-secondary);
+				border-top: 1px solid var(--border);
+			}
+
+			.container {
+				width: 100%;
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 0 1.5rem;
+			}
+
+			@media (max-width: 768px) {
+				.nav-links { display: none; }
+				.navbar { width: 100%; }
+			}
+		</style>
 	</body>
 </html>

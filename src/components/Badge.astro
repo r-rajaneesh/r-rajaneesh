@@ -1,0 +1,57 @@
+---
+const { status } = Astro.props;
+
+const labels = {
+  open_for_work: "Open for work",
+  hiring: "Hiring",
+  none: null
+};
+
+const label = labels[status];
+if (!label) return null;
+---
+
+<div class={`badge ${status}`}>
+  <span class="dot"></span>
+  <span class="label">{label}</span>
+</div>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    border: 1px solid transparent;
+  }
+
+  .open_for_work {
+    background-color: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0;
+  }
+
+  .hiring {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border-color: #bfdbfe;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 0;
+    background-color: currentColor;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+</style>
