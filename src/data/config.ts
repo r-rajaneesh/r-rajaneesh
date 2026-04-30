@@ -114,6 +114,7 @@ const localConfig: Config = {
       period: "2022 – 2024",
     },
   ],
+  resumeUrl: "/resume.pdf",
 };
 
 export async function getConfig(): Promise<Config> {

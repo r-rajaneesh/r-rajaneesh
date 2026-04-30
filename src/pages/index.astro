@@ -96,7 +96,7 @@ const config = await getConfig();
 			<section id="resume">
 				<div class="container">
 					<h2 class="reveal section-title">Resume</h2>
-					<ResumeViewer client:only="react" />
+					<ResumeViewer client:only="react" resumeUrl={config.resumeUrl} />
 				</div>
 			</section>
 

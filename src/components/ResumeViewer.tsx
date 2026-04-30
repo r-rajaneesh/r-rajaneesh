@@ -6,7 +6,11 @@ import 'react-pdf/dist/Page/TextLayer.css';
 // Set up the worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-const ResumeViewer: React.FC = () => {
+interface ResumeViewerProps {
+  resumeUrl: string;
+}
+
+const ResumeViewer: React.FC<ResumeViewerProps> = ({ resumeUrl }) => {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -32,13 +36,13 @@ const ResumeViewer: React.FC = () => {
     <div className="resume-viewer-container glass-card" ref={containerRef}>
       <div className="resume-header">
         <h3>Resume Preview</h3>
-        <a href="/resume.pdf" download className="download-btn">
+        <a href={resumeUrl} download className="download-btn">
           Download PDF
         </a>
       </div>
       <div className="pdf-container">
         <Document
-          file="/resume.pdf"
+          file={resumeUrl}
           onLoadSuccess={onDocumentLoadSuccess}
           loading={<div className="loading">Loading Resume...</div>}
         >

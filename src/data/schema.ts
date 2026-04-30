@@ -53,6 +53,7 @@ export const ConfigSchema = z.object({
   experience: z.array(ExperienceSchema),
   projects: z.array(ProjectSchema),
   education: z.array(EducationSchema),
+  resumeUrl: z.string().default('/resume.pdf'),
 });
 
 export type Config = z.infer<typeof ConfigSchema>;
