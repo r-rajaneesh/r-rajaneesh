@@ -23,20 +23,13 @@ export const GET: APIRoute = async () => {
     console.log(`Proxy fetching: ${finalUrl}, Status: ${response.status}`);
     
     const contentType = response.headers.get('Content-Type');
-    console.log(`Upstream Content-Type: ${contentType}`);
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Upstream error: ${errorText}`);
       return new Response(`Failed to fetch resume: ${response.statusText}`, { status: response.status });
     }
 
     if (contentType && contentType.includes('text/html')) {
-      console.error('Received HTML instead of PDF. This might be a Google Drive confirmation page.');
-      // You can try to log a bit of the HTML to see what it is
-      const htmlSnippet = (await response.text()).substring(0, 500);
-      console.log('HTML Snippet:', htmlSnippet);
-      return new Response('Error: Received HTML instead of PDF. Check the Google Drive link permissions.', { status: 500 });
+      return new Response('Error: Received HTML instead of PDF. Ensure your Google Drive file is set to "Anyone with the link can view".', { status: 403 });
     }
 
     const blob = await response.blob();
@@ -44,7 +37,7 @@ export const GET: APIRoute = async () => {
     return new Response(blob, {
       headers: {
         'Content-Type': 'application/pdf',
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control': 'no-store, must-revalidate',
         'Content-Disposition': 'inline; filename="resume.pdf"'
       }
     });

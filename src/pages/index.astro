@@ -97,7 +97,7 @@ const config = await getConfig();
 				<div class="container">
 					<h2 class="reveal section-title">Resume</h2>
 					{config.resumeUrl.startsWith('http') ? (
-						<ResumeViewer client:only="react" resumeUrl="/api/resume.pdf" />
+						<ResumeViewer client:only="react" resumeUrl={`/api/resume.pdf?t=${Date.now()}`} />
 					) : (
 						<ResumeViewer client:only="react" resumeUrl={config.resumeUrl} />
 					)}
