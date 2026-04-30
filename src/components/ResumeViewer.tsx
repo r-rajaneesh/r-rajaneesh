@@ -28,8 +28,16 @@ const ResumeViewer: React.FC<ResumeViewerProps> = ({ resumeUrl }) => {
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
+  const [error, setError] = useState<string | null>(null);
+
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
+    setError(null);
+  }
+
+  function onDocumentLoadError(err: Error) {
+    console.error('PDF Load Error:', err);
+    setError(err.message);
   }
 
   return (
@@ -41,21 +49,31 @@ const ResumeViewer: React.FC<ResumeViewerProps> = ({ resumeUrl }) => {
         </a>
       </div>
       <div className="pdf-container">
-        <Document
-          file={resumeUrl}
-          onLoadSuccess={onDocumentLoadSuccess}
-          loading={<div className="loading">Loading Resume...</div>}
-        >
-          {Array.from(new Array(numPages), (el, index) => (
-            <Page 
-              key={`page_${index + 1}`} 
-              pageNumber={index + 1} 
-              scale={1}renderTextLayer={false}
-              // renderAnnotationLayer={false}
-              width={containerWidth || 300}
-            />
-          ))}
-        </Document>
+        {error ? (
+          <div className="error-message">
+            <p>Unable to load preview. This usually happens if the link is private or restricted.</p>
+            <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="download-btn" style={{marginTop: '1rem'}}>
+              Open in New Tab
+            </a>
+          </div>
+        ) : (
+          <Document
+            file={resumeUrl}
+            onLoadSuccess={onDocumentLoadSuccess}
+            onLoadError={onDocumentLoadError}
+            loading={<div className="loading">Loading Resume...</div>}
+          >
+            {Array.from(new Array(numPages), (el, index) => (
+              <Page 
+                key={`page_${index + 1}`} 
+                pageNumber={index + 1} 
+                scale={1}
+                renderTextLayer={false}
+                width={containerWidth || 300}
+              />
+            ))}
+          </Document>
+        )}
       </div>
       <style>{`
         .resume-viewer-container {
@@ -127,10 +145,14 @@ const ResumeViewer: React.FC<ResumeViewerProps> = ({ resumeUrl }) => {
           max-width: 100% !important;
           height: auto !important;
         }
-        .loading {
+        .loading, .error-message {
           padding: 3rem;
           text-align: center;
           color: var(--text-secondary);
+        }
+        .error-message p {
+          margin-bottom: 1rem;
+          color: #ef4444;
         }
       `}</style>
     </div>
