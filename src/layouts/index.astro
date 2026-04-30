@@ -1,0 +1,98 @@
+---
+import "../styles/global.css";
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <!-- <title>Rajaneesh R</title> -->
+    <meta name="title" content="Rajaneesh R" />
+    <meta
+      name="description"
+      content="Rajaneesh is a B.Tech. IT student at Ramakrishna Engineering College. He is a geek in coding at various programming languages, he also loves working with circuits and 3D designs."
+    />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://r-rajaneesh.vercel.app/" />
+    <meta property="og:title" content="Rajaneesh R" />
+    <meta
+      property="og:description"
+      content="Rajaneesh is a B.Tech. IT student at Ramakrishna Engineering College. He is a geek in coding at various programming languages, he also loves working with circuits and 3D designs."
+    />
+    <!-- <meta
+      property="og:image"
+      content="https://metatags.io/images/meta-tags.png"
+    /> -->
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://r-rajaneesh.vercel.app" />
+    <meta property="twitter:title" content="Rajaneesh R" />
+    <meta
+      property="twitter:description"
+      content="Rajaneesh is a B.Tech. IT student at Ramakrishna Engineering College. He is a geek in coding at various programming languages, he also loves working with circuits and 3D designs."
+    />
+    <!-- <meta
+      property="twitter:image"
+      content="https://metatags.io/images/meta-tags.png"
+    /> -->
+
+    <!-- Meta Tags Generated with https://metatags.io -->
+  </head>
+  <body>
+    <slot />
+  </body>
+  <script>
+    // import $ from "jquery";
+
+    // $(function () {
+    const storedTheme = localStorage.getItem("data-theme") ?? "light";
+    if (storedTheme) {
+      // $("html").attr("data-theme", storedTheme);
+      document
+        .getElementsByTagName("html")
+        .item(0)
+        ?.setAttribute("data-theme", storedTheme);
+    } else {
+    }
+    /* Client Preferred Theme Check */
+    function detectTheme() {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        // $("html").attr("data-theme", "dark");
+         document
+        .getElementsByTagName("html")
+        .item(0)
+        ?.setAttribute("data-theme", "dark");
+        localStorage.setItem("data-theme", "dark");
+      } else {
+        // $("html").attr("data-theme", "light");
+         document
+        .getElementsByTagName("html")
+        .item(0)
+        ?.setAttribute("data-theme", "light");
+        localStorage.setItem("data-theme", "light");
+      }
+    }
+    // Initial detection
+    detectTheme();
+
+    // Listen for changes
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", detectTheme);
+    // });
+  </script>
+</html>
