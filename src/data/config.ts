@@ -87,7 +87,7 @@ const localConfig: Config = {
       title: "eAttendance",
       description: "Automatic computer laboratory attendance system syncing with a central server upon boot.",
       tags: ["Python", "Raspberry Pi", "Networking"],
-      link: "https://github.com/r-rajaneesh",
+      link: "https://github.com/r-rajaneesh/Lab_Attendance_System",
     },
     {
       title: "EDUDOTE",

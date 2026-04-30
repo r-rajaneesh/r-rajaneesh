@@ -46,7 +46,8 @@ const ResumeViewer: React.FC = () => {
             <Page 
               key={`page_${index + 1}`} 
               pageNumber={index + 1} 
-              scale={1}
+              scale={1}renderTextLayer={false}
+              // renderAnnotationLayer={false}
               width={containerWidth || 300}
             />
           ))}

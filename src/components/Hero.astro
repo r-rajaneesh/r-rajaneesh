@@ -9,7 +9,7 @@ const config = await getConfig();
   <div class="container">
     <div class="hero-content parallax">
       <div class="hero-header">
-        <img src="https://github.com/r-rajaneesh.png" alt={config.name} class="profile-photo reveal" />
+        <img src="/favicon.webp" alt={config.name} class="profile-photo reveal" />
         <div class="hero-top">
           <h1 class="reveal name">{config.name}</h1>
           <Badge status={config.status} />
@@ -26,20 +26,18 @@ const config = await getConfig();
 </section>
 
 <script>
-  import anime from 'animejs';
+  import { animate as anime } from 'animejs';
 
   // Entry animations
   window.addEventListener('DOMContentLoaded', () => {
-    anime({
-      targets: '.profile-photo',
+    anime('.profile-photo', {
       opacity: [0, 1],
       scale: [0.8, 1],
       duration: 1200,
       easing: 'easeOutExpo'
     });
 
-    anime({
-      targets: '.name',
+    anime('.name', {
       opacity: [0, 1],
       translateX: [-50, 0],
       duration: 1500,
@@ -53,15 +51,13 @@ const config = await getConfig();
     const scrolled = window.pageYOffset;
     const parallaxEl = document.querySelector('.parallax');
     if (parallaxEl) {
-      anime({
-        targets: '.parallax',
+      anime('.parallax', {
         translateY: scrolled * 0.3,
         duration: 0,
         easing: 'linear'
       });
       
-      anime({
-        targets: '.profile-photo',
+      anime('.profile-photo', {
         rotate: scrolled * 0.05,
         duration: 0,
         easing: 'linear'

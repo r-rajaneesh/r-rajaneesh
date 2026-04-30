@@ -57,7 +57,7 @@ export default function AdminDashboard({ initialConfig }: Props) {
               <button 
                 onClick={handleSave} 
                 disabled={saving}
-                className={`btn primary ${saving ? 'loading' : ''}`}
+                className={`btn primary small ${saving ? 'loading' : ''}`}
               >
                 {saving ? 'Saving...' : 'Save Changes'}
               </button>

@@ -76,7 +76,9 @@ section {
 }
 
 .btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 1rem 2rem;
   border-radius: 0;
   font-weight: 600;
