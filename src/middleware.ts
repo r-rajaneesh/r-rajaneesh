@@ -1,17 +1,10 @@
 import { defineMiddleware } from "astro:middleware";
 import { supabase } from "./lib/supabase";
+import { generatePoisonedResponse } from "./lib/poison";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request, url } = context;
   
-  // Skip static assets and internal requests
-  const isStatic = url.pathname.match(/\.(well-known|favicon|webp|png|jpg|jpeg|svg|css|js|pdf|txt)$/);
-  const isApi = url.pathname.startsWith('/api/');
-  
-  if (isStatic || isApi) {
-    return next();
-  }
-
   const headers = request.headers;
   
   // Get IP address (prioritize Vercel headers)
@@ -19,13 +12,44 @@ export const onRequest = defineMiddleware(async (context, next) => {
              headers.get('x-forwarded-for')?.split(',')[0] || 
              context.clientAddress;
 
+  const userAgent = headers.get('user-agent') || '';
+  const lowerUA = userAgent.toLowerCase();
+
   // Extract Vercel Geolocation headers
   const city = headers.get('x-vercel-ip-city');
   const region = headers.get('x-vercel-ip-country-region');
   const country = headers.get('x-vercel-ip-country');
   const latitude = headers.get('x-vercel-ip-latitude');
   const longitude = headers.get('x-vercel-ip-longitude');
-  const userAgent = headers.get('user-agent');
+
+  // Define bot detection patterns (excluding googlebot)
+  const isGooglebot = lowerUA.includes('googlebot');
+  const botPatterns = [
+    'bot', 'spider', 'crawler', 'scraper', 
+    'python', 'curl', 'wget', 'urllib', 'httpclient',
+    'headless', 'phantomjs', 'selenium', 'puppeteer',
+    'mixrankbot', 'ev-crawler'
+  ];
+  
+  const isBot = botPatterns.some(pattern => lowerUA.includes(pattern));
+
+  // Serve "poisoned" content to bots/scrapers except googlebot
+  const isResumePath = url.pathname.toLowerCase().includes('resume');
+  const isStatic = url.pathname.match(/\.(well-known|favicon|webp|png|jpg|jpeg|svg|css|js|pdf|txt)$/) && !isResumePath;
+  const isApi = url.pathname.startsWith('/api/') && !isResumePath;
+  
+  // Special test route to view the bot defense content in a normal browser
+  const isTestRoute = url.pathname === '/test-bot-defense';
+  
+  if (isBot && !isGooglebot && (!isStatic && !isApi) || isTestRoute) {
+    console.log(`[Poisoning Bot${isTestRoute ? ' (TEST)' : ''}] UA: ${userAgent} | IP: ${ip} | Path: ${url.pathname}`);
+    return generatePoisonedResponse();
+  }
+
+  // Skip static assets and other internal requests
+  if (isStatic || isApi) {
+    return next();
+  }
 
   // Log to Supabase in the background
   if (supabase) {

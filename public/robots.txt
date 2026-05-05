@@ -1,7 +1,13 @@
-User-agent: *
+User-agent: Googlebot
+Allow: /
 Disallow: /admin
 Disallow: /admin/
 Disallow: /api
 Disallow: /api/
+
+User-agent: *
+Disallow: /api/resume.pdf
+Disallow: /resume.pdf
+Allow: /
 
 Sitemap: https://r-rajaneesh.vercel.app/sitemap.xml
